@@ -1,4 +1,3 @@
-#require_relative '../feature_spec_helper'
 require_relative '../lib/active_data_tables'
 
 shared_examples 'active_data_tables' do
@@ -98,18 +97,32 @@ RSpec.describe ActiveDataTables do
 
   end
 
-  context 'ActiveRecord query', skip: true do
+  context 'ActiveRecord query' do
+    require_relative 'support/event'
 
-    describe '#find' do
+    ActiveRecord::Base.establish_connection(
+      :adapter  => 'sqlite3',
+      :database => ':memory:'
+    )
 
-      before(:each) do
-        data.each { |d| FactoryGirl.create(:event, date: d[:date]) }
+    ActiveRecord::Schema.define do
+      unless ActiveRecord::Base.connection.tables.include? 'events'
+        create_table :events do |table|
+          table.column :date,     :datetime
+        end
       end
+    end
 
-      it_behaves_like 'active_data_tables' do
-        subject { Event }
-      end
+    before(:each) do
+      data.each { |d| Event.create(date: d[:date]) }
+    end
 
+    after(:each) do
+      Event.delete_all
+    end
+
+    it_behaves_like 'active_data_tables' do
+      subject { Event }
     end
 
   end
