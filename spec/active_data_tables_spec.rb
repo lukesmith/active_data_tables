@@ -1,3 +1,5 @@
+require 'coveralls'
+Coveralls.wear!
 require_relative '../lib/active_data_tables'
 
 shared_examples 'active_data_tables' do
