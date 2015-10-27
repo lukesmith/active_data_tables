@@ -1,6 +1,4 @@
-require 'coveralls'
-Coveralls.wear!
-require_relative '../lib/active_data_tables'
+require_relative 'spec_helper'
 
 shared_examples 'active_data_tables' do
 
@@ -101,19 +99,6 @@ RSpec.describe ActiveDataTables do
 
   context 'ActiveRecord query' do
     require_relative 'support/event'
-
-    ActiveRecord::Base.establish_connection(
-      :adapter  => 'sqlite3',
-      :database => ':memory:'
-    )
-
-    ActiveRecord::Schema.define do
-      unless ActiveRecord::Base.connection.tables.include? 'events'
-        create_table :events do |table|
-          table.column :date,     :datetime
-        end
-      end
-    end
 
     before(:each) do
       data.each { |d| Event.create(date: d[:date]) }
