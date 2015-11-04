@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name        = 'active_data_tables'
-  s.version     = '0.0.1'
+  s.version     = '0.0.2'
   s.date        = '2015-10-27'
   s.summary     = "Server side processing for datatables.net"
   s.description = "Server side processing for datatables.net"
