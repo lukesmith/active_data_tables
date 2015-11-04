@@ -9,7 +9,10 @@ class ActiveDataTables
 
   def execute
     total = @query.count
-    filtered = total # don't currently support filtering records so this will be the same as the total
+
+    apply_filtering
+
+    filtered = @query.count
 
     apply_paging
     apply_ordering
@@ -47,6 +50,36 @@ class ActiveDataTables
   end
 
   private
+
+  def apply_filtering
+    columns = searchable_columns
+
+    if @params[:search] && !@params[:search][:value].blank?
+      search_value = @params[:search][:value].downcase
+
+      if @query.is_a?(Array)
+        @query = @query.select do |item|
+          columns.select do |k, v|
+            column_data = v[:data].to_sym
+            item[column_data].to_s.downcase.include?(search_value)
+          end.length > 0
+        end
+      else
+        clauses = nil
+        columns.each do |k, v|
+          column_data = v[:data].to_sym
+          clause = @query.arel_table[column_data].matches("%#{search_value}%")
+          if clauses.nil?
+            clauses = clause
+          else
+            clauses = clauses.or(clause)
+          end
+        end
+
+        @query = @query.where(clauses)
+      end
+    end
+  end
 
   def apply_paging
     if @params[:start]
@@ -92,6 +125,16 @@ class ActiveDataTables
 
   def load_columns
     @params[:columns] || {}
+  end
+
+  def searchable_columns
+    columns = load_columns
+    searchable = {}
+    searchable = columns.select do |column_index|
+      columns[column_index][:searchable] == "true"
+    end
+
+    searchable
   end
 
 end

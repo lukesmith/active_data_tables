@@ -12,7 +12,9 @@ ActiveRecord::Base.establish_connection(
 ActiveRecord::Schema.define do
   unless ActiveRecord::Base.connection.tables.include? 'events'
     create_table :events do |table|
-      table.column :date,     :datetime
+      table.column :title,          :string
+      table.column :description,    :string
+      table.column :date,           :datetime
     end
   end
 end
