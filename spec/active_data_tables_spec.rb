@@ -97,6 +97,29 @@ shared_examples 'active_data_tables' do
 
   end
 
+  describe 'apply sorting and paging on a single column' do
+
+    before(:each) do
+      params[:order] = {}
+      params[:order][:'0'] = { column: '0', dir: 'asc' }
+      params[:start] = 2
+      params[:length] = 1
+
+      @result = ActiveDataTables.find(subject, params)
+    end
+
+    it { expect(@result.records_total).to eq(6) }
+
+    it { expect(@result.records_filtered).to eq(6) }
+
+    it { expect(@result.data[0].date).to eq(Time.new(2014, 1, 1, 0, 0, 3)) }
+
+    it { expect(@result.data.length).to eq(1) }
+
+    it { expect(@result.data) }
+
+  end
+
 end
 
 RSpec.describe ActiveDataTables do
