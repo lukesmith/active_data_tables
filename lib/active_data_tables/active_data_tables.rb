@@ -14,8 +14,8 @@ class ActiveDataTables
 
     filtered = @query.count
 
-    apply_paging
     apply_ordering
+    apply_paging
 
     DataTablesResult.new(@params[:draw].to_i, @query, total, filtered)
   end
