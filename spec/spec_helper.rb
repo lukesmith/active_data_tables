@@ -15,6 +15,7 @@ ActiveRecord::Schema.define do
       table.column :title,          :string
       table.column :description,    :string
       table.column :date,           :datetime
+      table.column :category,       :string
     end
   end
 end

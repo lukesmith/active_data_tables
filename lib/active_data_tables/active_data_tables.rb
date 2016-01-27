@@ -116,7 +116,15 @@ class ActiveDataTables
       @query = @query.sort do |row1, row2|
         keys = order.map{ |key, direction|
           val = direction == :desc ? -1 : 1
-          val * (row1[key] <=> row2[key])
+          if row1[key].nil? && !row2[key].nil?
+            val * -1
+          elsif row2[key].nil? && !row1[key].nil?
+            val * 1
+          elsif row2[key].nil? && row1[key].nil?
+            0
+          else
+            val * (row1[key] <=> row2[key])
+          end
         }
         keys.find { |x| x != 0 } || 0
       end
