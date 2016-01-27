@@ -97,6 +97,42 @@ shared_examples 'active_data_tables' do
 
   end
 
+  describe 'apply ascending sorting on a single column with nil values' do
+
+    before(:each) do
+      params[:order] = {}
+      params[:order][:'0'] = { column: '3', dir: 'asc' }
+      @result = ActiveDataTables.find(subject, params)
+    end
+
+    it { expect(@result.records_total).to eq(6) }
+
+    it { expect(@result.records_filtered).to eq(6) }
+
+    it { expect(@result.data[0].category).to eq(nil)}
+
+    it { expect(@result.data[5].category).to eq('Celebration')}
+
+  end
+
+  describe 'apply descending sorting on a single column with nil values' do
+
+    before(:each) do
+      params[:order] = {}
+      params[:order][:'0'] = { column: '3', dir: 'desc' }
+      @result = ActiveDataTables.find(subject, params)
+    end
+
+    it { expect(@result.records_total).to eq(6) }
+
+    it { expect(@result.records_filtered).to eq(6) }
+
+    it { expect(@result.data[0].category).to eq('Celebration') }
+
+    it { expect(@result.data[5].category).to eq(nil) }
+
+  end
+
   describe 'apply sorting and paging on a single column' do
 
     before(:each) do
@@ -125,12 +161,12 @@ end
 RSpec.describe ActiveDataTables do
 
   let(:data) { [
-    {date: Time.new(2014, 1, 1, 0, 0, 1), title: 'Single', description: 'My only Single'},
-    {date: Time.new(2014, 1, 1, 0, 0, 2), title: 'Double', description: 'I''m a double'},
-    {date: Time.new(2014, 1, 1, 0, 0, 3), title: 'Double', description: 'I''m another double'},
-    {date: Time.new(2014, 1, 1, 0, 0, 4), title: 'Wedding', description: 'Marrying someone, get some presents'},
-    {date: Time.new(2014, 1, 1, 0, 0, 5), title: 'Birthday', description: 'Presents'},
-    {date: Time.new(2014, 1, 1, 0, 0, 6), title: 'Christmas', description: 'Presents'},
+    {date: Time.new(2014, 1, 1, 0, 0, 1), title: 'Single',    description: 'My only Single',      category: nil },
+    {date: Time.new(2014, 1, 1, 0, 0, 2), title: 'Double',    description: 'I''m a double',       category: nil },
+    {date: Time.new(2014, 1, 1, 0, 0, 3), title: 'Double',    description: 'I''m another double', category: 'Celebration' },
+    {date: Time.new(2014, 1, 1, 0, 0, 4), title: 'Wedding',   description: 'Marrying someone, get some presents', category: 'Celebration' },
+    {date: Time.new(2014, 1, 1, 0, 0, 5), title: 'Birthday',  description: 'Presents', category: 'Celebration' },
+    {date: Time.new(2014, 1, 1, 0, 0, 6), title: 'Christmas', description: 'Presents', category: nil },
   ] }
 
   let(:params) {
@@ -143,6 +179,7 @@ RSpec.describe ActiveDataTables do
         :'0' => { data: 'date',        name: '', searchable: 'false', orderable: 'true',  search: { value: '', regex: 'false' } },
         :'1' => { data: 'title',       name: '', searchable: 'true',  orderable: 'false', search: { value: '', regex: 'false' } },
         :'2' => { data: 'description', name: '', searchable: 'true',  orderable: 'false', search: { value: '', regex: 'false' } },
+        :'3' => { data: 'category',    name: '', searchable: 'true',  orderable: 'true',  search: { value: '', regex: 'false' } },
       }
     }
   }
@@ -159,7 +196,7 @@ RSpec.describe ActiveDataTables do
     require_relative 'support/event'
 
     before(:each) do
-      data.each { |d| Event.create(date: d[:date], title: d[:title], description: d[:description]) }
+      data.each { |d| Event.create(date: d[:date], title: d[:title], description: d[:description], category: d[:category]) }
     end
 
     after(:each) do
