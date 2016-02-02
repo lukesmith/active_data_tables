@@ -16,6 +16,7 @@ ActiveRecord::Schema.define do
       table.column :description,    :string
       table.column :date,           :datetime
       table.column :category,       :string
+      table.column :party,          :boolean
     end
   end
 end
