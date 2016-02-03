@@ -120,7 +120,11 @@ class ActiveDataTables
             val * -1
           elsif row2[key].nil? && !row1[key].nil?
             val * 1
-          elsif row2[key].nil? && row1[key].nil?
+          elsif row1[key] == true
+            val * 1
+          elsif row1[key] == false
+            val * -1
+          elsif row1[key] == row2[key]
             0
           else
             val * (row1[key] <=> row2[key])
